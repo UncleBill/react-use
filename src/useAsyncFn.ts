@@ -45,9 +45,10 @@ export default function useAsyncFn<T extends FunctionReturningPromise>(
   const callback = useCallback((...args: Parameters<T>): ReturnType<T> => {
     const callId = ++lastCallId.current;
 
-    if (!state.loading) {
-      set((prevState) => ({ ...prevState, loading: true }));
-    }
+    set((prevState) => {
+      if (state.loading) return prevState;
+      return { ...prevState, loading: true };
+    });
 
     return fn(...args).then(
       (value) => {
